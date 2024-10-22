@@ -1,0 +1,108 @@
+name: 'Coditory multi setup'
+description: 'Single action to setup all kinds of environments for building projects.'
+branding:
+  icon: play
+  color: blue
+inputs:
+  # Java
+  java-version:
+    description: 'Java version'
+    required: false
+  java-distribution:
+    description: 'Java distribution'
+    required: false
+    default: 'temurin'
+  gradle-validate:
+    description: 'Validate gradle wrapper'
+    required: false
+    default: 'false'
+  gradle-dependency-graph:
+    description: 'Publish gradle dependency graph'
+    required: false
+    default: 'false'
+  # Go
+  go-version:
+    description: 'Go version'
+    required: false
+  # Node
+  node-version:
+    description: 'Go version'
+    required: false
+  # Python
+  python-version:
+    description: 'Python version'
+    required: false
+  # Rust
+  rust-toolchain:
+    description: 'Rust toolchain (e.g. nightly)'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    # Java
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      if: inputs.java-version != ''
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.java-distribution }}
+
+    - name: Validate gradle wrapper
+      if: inputs.java-version != ''
+      uses: gradle/actions/wrapper-validation@v4
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      if: inputs.java-version != ''
+      with:
+        # Publish dependency graph only for the default branch
+        dependency-graph: |
+          ${{ inputs.gradle-dependency-graph }} == 'true'
+          && ${{ (github.event.repository != null && github.ref_name == github.event.repository.default_branch)
+          && 'generate-and-submit' || 'disabled' }}
+
+    # Go
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      if: inputs.go-version != ''
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    # Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      if: inputs.node-version != ''
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    # Python
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      if: inputs.python-version != ''
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'pip'
+
+    # Rust
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      if: inputs.rust-toolchain != ''
+      with:
+        profile: minimal
+        toolchain: ${{ inputs.rust-toolchain }}
+        override: true
+        components: rustfmt, clippy
+
+    - name: Set up cargo cache
+      uses: actions/cache@v4
+      continue-on-error: false
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: ${{ runner.os }}-cargo-
