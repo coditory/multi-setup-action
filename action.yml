@@ -97,6 +97,7 @@ runs:
 
     - name: Set up cargo cache
       uses: actions/cache@v4
+      if: inputs.rust-toolchain != ''
       continue-on-error: false
       with:
         path: |
