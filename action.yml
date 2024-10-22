@@ -48,7 +48,9 @@ runs:
         distribution: ${{ inputs.java-distribution }}
 
     - name: Validate gradle wrapper
-      if: inputs.java-version != ''
+      if: |
+        inputs.java-version != ''
+        && inputs.gradle-validate == 'true'
       uses: gradle/actions/wrapper-validation@v4
 
     - name: Setup Gradle
