@@ -3,12 +3,12 @@ name: Release Auto
 on:
   workflow_dispatch:
   schedule:
-    # at 5:30 UTC every other month
-    - cron: "30 5 1 */2 *"
+    # at 5:30 UTC every month
+    - cron: "30 5 1 * *"
 
 jobs:
   check:
-    uses: coditory/workflows/.github/workflows/release-auto-check.yml@v1
+    uses: coditory/workflows/.github/workflows/release-check.yml@v1
     secrets: inherit
 
   auto-release:
