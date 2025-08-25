@@ -41,7 +41,7 @@ runs:
   steps:
     # Java
     - name: Setup JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       if: inputs.java-version != ''
       with:
         java-version: ${{ inputs.java-version }}
