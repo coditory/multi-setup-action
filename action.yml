@@ -64,7 +64,7 @@ runs:
 
     # Go
     - name: Setup Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       if: inputs.go-version != ''
       with:
         go-version: ${{ inputs.go-version }}
