@@ -79,7 +79,7 @@ runs:
 
     # Python
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       if: inputs.python-version != ''
       with:
         python-version: ${{ inputs.python-version }}
