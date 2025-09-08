@@ -71,7 +71,7 @@ runs:
 
     # Node.js
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       if: inputs.node-version != ''
       with:
         node-version: ${{ inputs.node-version }}
